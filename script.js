@@ -725,8 +725,8 @@ function acceptDefeat() {
         <h2 style="color: #ff3333; font-size: 2em; text-align: center;">> SISTEMA BLOQUEADO</h2>
         <p style="color: #00ff41; font-size: 1.5em; text-align: center; margin-top: 20px;">
             ¡Excelente trabajo vulnerando las ecuaciones exponenciales!<br><br>
-            Aprobaste el Escape Room...<br> 
-            <span style="color: #ffff00; font-size: 0.8em;">(Pero nos vemos en clase para rendir igual).</span>
+            ¡Aprobaste!... ¿Pero elegiste Diciembre?<br> 
+            <span style="color: #ffff00; font-size: 0.8em;">(No te preocupes, te comparto las fechas).</span>
         </p>
     `;
 }
