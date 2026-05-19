@@ -666,22 +666,50 @@ function checkFinalLog3() {
 // ==========================================
 
 function dodgeButton(btn, event) {
-    // Si el usuario intentó tocar la pantalla, prevenimos que se registre como un clic
     if (event) {
         event.preventDefault();
     }
 
     const container = btn.parentElement;
+    const btnDiciembre = document.getElementById('btn-diciembre');
     
     // Obtenemos los límites del contenedor
     const maxX = container.clientWidth - btn.clientWidth;
     const maxY = container.clientHeight - btn.clientHeight;
     
-    // Generamos coordenadas aleatorias
-    const randomX = Math.floor(Math.random() * maxX);
-    const randomY = Math.floor(Math.random() * Math.max(maxY, 100)); 
+    let randomX, randomY;
+    let isOverlapping = true;
+    let attempts = 0;
+
+    // Bucle para buscar coordenadas que no choquen con "Diciembre"
+    while (isOverlapping && attempts < 50) {
+        randomX = Math.floor(Math.random() * maxX);
+        randomY = Math.floor(Math.random() * Math.max(maxY, 100));
+
+        if (btnDiciembre) {
+            // Evaluamos si las nuevas coordenadas pisan el área del botón Diciembre (con 10px de margen)
+            const margin = 10;
+            const rectA = { x: randomX, y: randomY, width: btn.clientWidth, height: btn.clientHeight };
+            const rectD = { 
+                x: btnDiciembre.offsetLeft, 
+                y: btnDiciembre.offsetTop, 
+                width: btnDiciembre.clientWidth, 
+                height: btnDiciembre.clientHeight 
+            };
+
+            isOverlapping = (
+                rectA.x < rectD.x + rectD.width + margin &&
+                rectA.x + rectA.width + margin > rectD.x &&
+                rectA.y < rectD.y + rectD.height + margin &&
+                rectA.y + rectA.height + margin > rectD.y
+            );
+        } else {
+            isOverlapping = false;
+        }
+        attempts++;
+    }
     
-    // Movemos el botón
+    // Movemos el botón a la zona segura
     btn.style.left = randomX + 'px';
     btn.style.top = randomY + 'px';
 }
