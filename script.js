@@ -702,3 +702,46 @@ function acceptDefeat() {
         </p>
     `;
 }
+
+// VALIDADOR FASE BIFURCADA: Bases Iguales
+function checkBaseMatch3() {
+    playTick();
+    let expL = document.getElementById('base-exp-left').value.replace(/\s+/g, '').toLowerCase();
+    let expR = document.getElementById('base-exp-right').value.replace(/\s+/g, '').toLowerCase();
+    const errorMsg = document.getElementById('error-base-1');
+    
+    if (expL === currentEq3.route1.matchExpLeft && expR === currentEq3.route1.matchExpRight) {
+        document.getElementById('sub-step-base-1').classList.add('hidden');
+        addCascadeLine3('eq3-line-5', `x = ${currentEq3.route1.finalX}`, '#ffff00');
+        
+        solvedCores++;
+        updateCoreCounterDisplay();
+        
+        if (solvedCores < coresRequired) {
+            // Reutilizamos el párrafo superior de step-3-d para dar feedback
+            const step3D_P = document.querySelector('#step-3-d p.success-text');
+            const originalText = step3D_P.innerText;
+            
+            step3D_P.innerText = `> ¡Solución encontrada! Ecuación ${solvedCores} de ${coresRequired} superada.`;
+            
+            setTimeout(() => {
+                step3D_P.innerText = "> Inicializando siguiente secuencia encriptada...";
+            }, 2500);
+
+            setTimeout(() => {
+                step3D_P.innerText = originalText;
+                loadNextEquation3();
+            }, 4500); 
+        } else {
+            document.getElementById('level-3').classList.add('hidden');
+            document.getElementById('success-screen').classList.remove('hidden');
+            simulateDownload(() => {
+                document.getElementById('success-screen').classList.add('hidden');
+                document.getElementById('final-prank-screen').classList.remove('hidden');
+            });
+        }
+    } else {
+        errorMsg.classList.remove('hidden');
+        setTimeout(() => errorMsg.classList.add('hidden'), 3500);
+    }
+}
