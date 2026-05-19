@@ -202,6 +202,16 @@
             <div id="step-3-d" class="hidden">
                 <br>
                 <p class="success-text">> Ruta inestable purgada. Enfocando poder de cómputo en ruta válida.</p>
+                <div id="sub-step-base-1" class="hidden">
+                    <p>> Bases compatibles detectadas. Iguala los exponentes directamente:</p>
+                    <div style="font-size: 1.3em; display: flex; justify-content: center; align-items: center; margin: 15px 0;">
+                        <input type="text" id="base-exp-left" placeholder="exp" style="width: 50px; background: transparent; border: none; border-bottom: 1px solid #00ff41; color: #00ff41; outline: none; text-align: center; font-family: inherit;">
+                        <span style="margin: 0 15px;">=</span>
+                        <input type="text" id="base-exp-right" placeholder="exp" style="width: 50px; background: transparent; border: none; border-bottom: 1px solid #00ff41; color: #00ff41; outline: none; text-align: center; font-family: inherit;">
+                    </div>
+                    <button onclick="checkBaseMatch3()">> DESENCRIPTAR X</button>
+                    <div id="error-base-1" class="error-msg hidden">> Error: Exponentes incorrectos.</div>
+                </div>
                 
                 <div id="sub-step-log-1">
                     <p>> Bases incompatibles. Inyecta logaritmo a ambos miembros de la igualdad:</p>
