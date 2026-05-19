@@ -527,17 +527,28 @@ function selectRoute(routeNum) {
     playTick();
     const route = routeNum === 1 ? currentEq3.route1 : currentEq3.route2;
     const errorMsg = document.getElementById('error-3c');
-    
     if (route.isValid) {
         document.getElementById('step-3-c').classList.add('hidden');
-        
         addCascadeLine3('eq3-line-4', route.latex, '#00ff41');
         
+        document.getElementById('step-3-d').classList.remove('hidden');
+        
         if (route.type === "log") {
+            // Lógica original de logaritmos
             document.getElementById('log-inject-left').innerHTML = '';
             document.getElementById('log-inject-right').value = '';
-            document.getElementById('step-3-d').classList.remove('hidden');
             document.getElementById('sub-step-log-1').classList.remove('hidden');
+            document.getElementById('sub-step-log-2').classList.add('hidden');
+            document.getElementById('sub-step-log-3').classList.add('hidden');
+            if (document.getElementById('sub-step-base-1')) document.getElementById('sub-step-base-1').classList.add('hidden');
+        } else if (route.type === "base") {
+            // Lógica nueva para bases iguales
+            document.getElementById('base-exp-left').value = '';
+            document.getElementById('base-exp-right').value = '';
+            document.getElementById('sub-step-base-1').classList.remove('hidden');
+            
+            // Ocultamos todo lo de logaritmos por las dudas
+            document.getElementById('sub-step-log-1').classList.add('hidden');
             document.getElementById('sub-step-log-2').classList.add('hidden');
             document.getElementById('sub-step-log-3').classList.add('hidden');
         }
