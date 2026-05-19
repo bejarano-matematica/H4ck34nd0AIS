@@ -121,3 +121,52 @@ button:hover { background: #00cc33; box-shadow: 0 0 10px #00ff41; }
 .rich-input:focus {
     box-shadow: 0 0 5px #00ff41;
 }
+
+
+/* ==========================================
+   ADAPTACIÓN PARA DISPOSITIVOS MÓVILES
+   ========================================== */
+@media (max-width: 600px) {
+    .terminal {
+        padding: 15px;
+        width: 95%;
+    }
+
+    /* Achicamos la fuente de toda la terminal y los inputs */
+    body {
+        font-size: 0.9em;
+    }
+
+    input, .rich-input {
+        width: 45px;
+        font-size: 1em;
+        padding: 3px;
+    }
+
+    button {
+        font-size: 0.85em;
+        padding: 8px 15px;
+    }
+
+    /* En el Nivel 3, apilamos las cajas de las dos rutas para que no queden aplastadas */
+    #step-3-c > div {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    #route-1-box, #route-2-box {
+        width: 90% !important;
+    }
+
+    /* Ajuste para el tamaño de las ecuaciones renderizadas por MathJax */
+    .equation, #math-display-level-1, #math-display-level-2, #math-display-level-3 {
+        font-size: 1.2em !important;
+    }
+
+    /* Ajustamos el layout interactivo de Bhaskara y Logaritmos */
+    div[style*="justify-content: center; gap: 20px;"] {
+        flex-direction: column;
+        gap: 10px !important;
+    }
+}
