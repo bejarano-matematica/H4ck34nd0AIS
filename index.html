@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mainframe IAS - Acceso Restringido</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <div class="terminal">
+        
+        <div id="boot-screen">
+            <div class="log">
+                > INICIANDO PROTOCOLO DE INFILTRACIÓN...<br>
+                > Enrutando conexión por proxy anónimo... Éxito.<br>
+                > Servidor objetivo: Instituto Alfonsina Storni [Mainframe Central].<br>
+                > Localizando directorio: /Alumnos/5to_Año/Notas_Finales/...<br>
+                > ¡ALERTA! Sistema de seguridad activado.<br>
+                > El Departamento de Matemática ha encriptado las actas con un firewall exponencial.<br>
+                > Para modificar los promedios a 10, es necesario romper los algoritmos.
+            </div>
+            <button onclick="startLevel1()">> INICIAR HACKEO DE NOTAS</button>
+            <div style="text-align: right; margin-top: 30px;">
+                <button onclick="skipToLevel(2)" style="background: transparent; color: #ff3333; border: 1px solid #ff3333; font-size: 0.7em;">> [DEV] BYPASS A NIVEL 2</button>
+            </div>
+        </div>
+
+        <div id="level-1" class="hidden">
+            <h2>> NIVEL 1: VULNERAR LA PUERTA DE ENTRADA</h2>
+            <div class="counter-display">> Nodos de seguridad vulnerados: <span id="node-counter">0 / 4</span></div>
+            <p>Interceptamos el primer firewall matemático del Instituto. Necesitamos desestabilizar ambos extremos de la ecuación:</p>
+            
+            <div id="math-display-level-1" style="margin: 30px 0; font-size: 1.5em; text-align: center; min-height: 40px;"></div>
+            
+            <div id="step-1-a">
+                <p>> PISTA: Lleva ambas expresiones a la menor base prima posible.</p>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 20px 0;">
+                    <div>
+                        <input type="number" id="base-left" placeholder="base"><sup><input type="number" id="exp-left" placeholder="exp"></sup>
+                        <span style="margin: 0 15px; font-weight: bold;">=</span> 
+                        <input type="number" id="base-right" placeholder="base"><sup><input type="number" id="exp-right" placeholder="exp"></sup>
+                    </div>
+                </div>
+                <button onclick="checkBase()">> IGUALAR BASES</button>
+                <div id="error-1a" class="error-msg hidden">> Error: La factorización prima no coincide con los registros del IAS.</div>
+            </div>
+
+            <div id="step-1-b" class="hidden">
+                <p class="success-text">> ¡Bases neutralizadas! Los escudos cayeron.</p>
+                <p>> Los exponentes bajan multiplicando. Aplica la propiedad distributiva:</p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <input type="text" id="dist-left" placeholder="Ej: 3x+3" style="width: 110px;"> = 
+                    <input type="text" id="dist-right" placeholder="Ej: 4x-8" style="width: 110px;">
+                </div>
+                <button onclick="checkDist()">> VERIFICAR DISTRIBUTIVA</button>
+                <div id="error-1b" class="error-msg hidden">> Error: Propiedad distributiva incorrecta. Revisa los signos.</div>
+            </div>
+
+            <div id="step-1-c" class="hidden">
+                <p class="success-text">> ¡Ecuación lineal expuesta!</p>
+                <p>> Ahora, despeja la variable para extraer la clave final y entrar al servidor:</p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <span>x = </span><input type="number" id="x-input" placeholder="valor" step="any">
+                </div>
+                <button onclick="checkX()">> DESENCRIPTAR</button>
+                <div id="error-1c" class="error-msg hidden">> Error: Clave incorrecta. Calcula bien el despeje.</div>
+            </div>
+            
+            <div style="text-align: right; margin-top: 30px;">
+                <button onclick="skipToLevel(2)" style="background: transparent; color: #ff3333; border: 1px solid #ff3333; font-size: 0.7em;">> [DEV] BYPASS A NIVEL 2</button>
+            </div>
+        </div>
+
+        <div id="level-2" class="hidden">
+            <h2>> NIVEL 2: EL CORTAFUEGOS DE PRECEPTORÍA</h2>
+            <div class="counter-display">> Archivos desencriptados: <span id="layer-counter">0 / 4</span></div>
+            <p>Alarma de intrusión detectada. Las notas están bloqueadas. Aísla el factor común para evadir el rastreo del sistema:</p>
+            
+            <div id="math-display-level-2" style="margin: 30px 0; font-size: 1.5em; text-align: center; min-height: 40px; display: flex; flex-direction: column; gap: 15px;"></div>
+            
+            <div id="step-2-a">
+                <p>> Aplica la propiedad de potencias para desglosar los términos (usa '.' o '*' para multiplicar):</p>
+                
+                <div style="display: flex; justify-content: center; align-items: stretch; margin: 15px 0;">
+                    <div id="expansion-input" class="rich-input" contenteditable="true" onkeyup="checkExpState()" placeholder="Ej: 2^2x + 2^2x.2^-1 + ..." style="width: 80%; text-align: left; padding: 10px; box-sizing: border-box; min-height: 44px;"></div>
+                    
+                    <button onclick="enableExponent('expansion-input')" style="margin-left: 10px; width: 60px; font-size: 1.4em; background: #0d0d0d; color: #00ff41; border: 1px solid #00ff41; cursor: pointer; border-radius: 3px; display: flex; align-items: center; justify-content: center;" title="Insertar exponente">^</button>
+                </div>
+                
+                <button onclick="checkExpansion()">> DESGLOSAR TÉRMINOS</button>
+                <div id="error-2a" class="error-msg hidden">> Error: La expansión no coincide. Revisa exponentes y signos.</div>
+            </div>
+
+            <div id="step-2-b" class="hidden">
+                <br>
+                <span>> Factor común literal detectado. Extráelo: </span>
+                <input type="number" id="fc-base" placeholder="base"><sup><input type="text" id="fc-exp" placeholder="exp" style="width: 60px;"></sup>
+                <button onclick="checkFactor()">> EXTRAER</button>
+                <div id="error-2b" class="error-msg hidden">> Error: El factor común literal no es correcto.</div>
+            </div>
+
+            <div id="step-2-c" class="hidden">
+                <br>
+                <p>> Introduce los términos residuales dentro del paréntesis para aislar la variable:</p>
+                
+                <div style="font-size: 1.2em; display: flex; justify-content: center; align-items: stretch; margin: 20px 0;">
+                    <span style="display: flex; align-items: center;">
+                        <span id="fc-display" class="success-text"></span> &middot; ( 
+                    </span>
+                    
+                    <div id="parenthesis-input" class="rich-input" contenteditable="true" onkeyup="checkExpState()" placeholder="Ej: 1+2^-1..." style="width: 220px; text-align: left; margin: 0 5px; padding: 8px; box-sizing: border-box; min-height: 40px;"></div> 
+                    
+                    <span style="display: flex; align-items: center;">
+                        ) = <span id="target-original-2" style="margin-left: 5px;"></span>
+                    </span>
+                    
+                    <button onclick="enableExponent('parenthesis-input')" style="margin-left: 15px; width: 50px; font-size: 1.2em; background: #0d0d0d; color: #00ff41; border: 1px solid #00ff41; cursor: pointer; border-radius: 3px; display: flex; align-items: center; justify-content: center;" title="Insertar exponente">^</button>
+                </div>
+                
+                <button onclick="checkParenthesis()">> EVALUAR PARÉNTESIS</button>
+                <div id="error-2c" class="error-msg hidden">> Error: Expresión residual incorrecta. Revisa las fracciones o signos.</div>
+            </div>
+
+            <div id="step-2-d" class="hidden">
+                <br>
+                <p>> Resuelve la suma del paréntesis (escribe el resultado en fracción, ej: 31/16):</p>
+                <div style="font-size: 1.2em; text-align: center; margin: 20px 0;">
+                    <span id="fc-display-2" class="success-text"></span> &middot; ( <input type="text" id="sum-input" placeholder="Suma" style="width: 80px;"> ) = <span id="target-original-3"></span>
+                </div>
+                <button onclick="checkSum()">> PROCESAR SUMA</button>
+                <div id="error-2d" class="error-msg hidden">> Error: La suma matemática no es correcta.</div>
+            </div>
+
+            <div id="step-2-e" class="hidden">
+                <br>
+                <p>> Pasa la fracción dividiendo al otro miembro, reduce la ecuación y extrae la nota:</p>
+                <div style="font-size: 1.2em; text-align: center; margin: 20px 0;">
+                    <span id="fc-display-3" class="success-text"></span> = <input type="number" id="reduced-target" placeholder="resultado" style="width: 100px;">
+                </div>
+                <span>x = </span><input type="number" id="x-input-2" placeholder="valor" step="any"><br>
+                <button onclick="checkLevel2Final()">> HACKEAR CAPA</button>
+                <div id="error-2e" class="error-msg hidden">> Error: Reducción o valor de x incorrectos.</div>
+            </div>
+            
+            <div style="text-align: right; margin-top: 30px;">
+                <button onclick="skipToLevel(3)" style="background: transparent; color: #ff3333; border: 1px solid #ff3333; font-size: 0.7em;">> [DEV] BYPASS A NIVEL 3</button>
+            </div>
+        </div>
+
+        <div id="level-3" class="hidden">
+            <h2>> NIVEL 3: EL NÚCLEO (BASE DE DATOS DE NOTAS)</h2>
+            <div class="counter-display">> Actas desencriptadas: <span id="core-counter">0 / 4</span></div>
+            <p>Advertencia: Ecuación enmascarada protegiendo las planillas finales. Identifica la base menor para iniciar la sustitución:</p>
+            
+            <div id="math-display-level-3" style="margin: 15px 0; font-size: 1.5em; text-align: center; min-height: 40px; display: flex; flex-direction: column; gap: 8px;"></div>
+            
+            <div id="step-3-a">
+                <div style="font-size: 1.2em; text-align: center; margin: 10px 0;">
+                    <span>Definir variable u = </span>
+                    <input type="number" id="u-base" placeholder="base" style="width: 70px;"><sup><input type="text" id="u-exp" placeholder="exp" style="width: 60px;"></sup>
+                </div>
+                <button onclick="checkMask3()">> APLICAR MÁSCARA</button>
+                <div id="error-3a" class="error-msg hidden">> Error: La sustitución no es la óptima para esta estructura.</div>
+            </div>
+
+            <div id="step-3-b" class="hidden">
+                <div style="border: 1px dashed #ffff00; padding: 10px; margin: 10px 0; color: #ffff00; text-align: center;">
+                    > ALERTA: La ecuación adquirió la forma estructural \( au^2 + bu + c = 0 \)<br>
+                    > Protocolo requerido: Fórmula de Bhaskara.
+                    <div id="bhaskara-formula" style="margin-top: 5px; font-size: 1.2em;"></div>
+                </div>
+                <p>> Ingresa las raíces obtenidas en el cálculo manual:</p>
+                <div style="display: flex; justify-content: center; gap: 20px; margin: 15px 0; font-size: 1.2em;">
+                    <div>u<sub>1</sub> = <input type="number" id="u-root-1" placeholder="raíz" style="width: 80px;" step="any"></div>
+                    <div>u<sub>2</sub> = <input type="number" id="u-root-2" placeholder="raíz" style="width: 80px;" step="any"></div>
+                </div>
+                <button onclick="checkRoots3()">> VULNERAR CUADRÁTICA</button>
+                <div id="error-3b" class="error-msg hidden">> Error: Raíces incorrectas. Revisa los cálculos de Bhaskara.</div>
+            </div>
+
+            <div id="step-3-c" class="hidden">
+                <p class="success-text" style="margin: 5px 0;">> Raíces confirmadas. Restaurando variable original...</p>
+                <p style="margin: 5px 0;">> Analizando rutas hacia las calificaciones. Descarta callejones sin salida:</p>
+                
+                <div style="display: flex; justify-content: space-around; margin: 15px 0;">
+                    <div id="route-1-box" style="border: 1px solid #00ff41; padding: 10px; border-radius: 5px; text-align: center; width: 40%;">
+                        <div id="route-1-math" style="font-size: 1.3em; margin-bottom: 10px;"></div>
+                        <button onclick="discardRoute(1)" style="background: transparent; border: 1px solid #ff3333; color: #ff3333; font-size: 0.8em; margin-top: 5px;">> DESCARTAR</button>
+                        <button onclick="selectRoute(1)" style="font-size: 0.8em; margin-top: 5px;">> DESENCRIPTAR</button>
+                    </div>
+                    <div id="route-2-box" style="border: 1px solid #00ff41; padding: 10px; border-radius: 5px; text-align: center; width: 40%;">
+                        <div id="route-2-math" style="font-size: 1.3em; margin-bottom: 10px;"></div>
+                        <button onclick="discardRoute(2)" style="background: transparent; border: 1px solid #ff3333; color: #ff3333; font-size: 0.8em; margin-top: 5px;">> DESCARTAR</button>
+                        <button onclick="selectRoute(2)" style="font-size: 0.8em; margin-top: 5px;">> DESENCRIPTAR</button>
+                    </div>
+                </div>
+                <div id="error-3c" class="error-msg hidden" style="text-align: center; min-height: 40px;">> Error.</div>
+            </div>
+
+            <div id="step-3-d" class="hidden">
+                <br>
+                <p class="success-text">> Ruta inestable purgada. Enfocando poder de cómputo en ruta válida.</p>
+                
+                <div id="sub-step-log-1">
+                    <p>> Bases incompatibles. Inyecta logaritmo a ambos miembros de la igualdad:</p>
+                    
+                    <div style="font-size: 1.3em; display: flex; justify-content: center; align-items: center; margin: 15px 0;">
+                        <span>log ( </span>
+                        <div id="log-inject-left" class="rich-input" contenteditable="true" onkeyup="checkExpState()" style="min-width: 60px; text-align: center; margin: 0 5px; padding: 5px;"></div>
+                        <span>) = log ( </span>
+                        <input type="text" id="log-inject-right" style="width: 50px; margin: 0 5px; background: transparent; border: none; border-bottom: 1px solid #00ff41; color: #00ff41; outline: none; text-align: center; font-family: inherit; font-size: 1em;">
+                        <span>)</span>
+                        <button onclick="enableExponent('log-inject-left')" style="margin-left: 15px; padding: 5px 15px; font-size: 1.2em; background: #0d0d0d; color: #00ff41; border: 1px solid #00ff41; cursor: pointer; border-radius: 3px;" title="Insertar exponente">^</button>
+                    </div>
+                    
+                    <button onclick="checkLogInject()">> INYECTAR</button>
+                    <div id="error-log-1" class="error-msg hidden">> Error: Argumentos incorrectos.</div>
+                </div>
+
+                <div id="sub-step-log-2" class="hidden">
+                    <p>> Propiedad logarítmica detectada: El exponente debe bajar multiplicando.</p>
+                    <div style="font-size: 1.3em; text-align: center; margin: 15px 0;">
+                        <input type="text" id="log-power-input" style="width: 40px; background: transparent; border: none; border-bottom: 1px solid #00ff41; color: #00ff41; outline: none; text-align: center; font-family: inherit; font-size: 1em;"> &middot; <span id="log-base-display"></span> = <span id="log-arg-display"></span>
+                    </div>
+                    <button onclick="checkLogPower()">> APLICAR PROPIEDAD</button>
+                    <div id="error-log-2" class="error-msg hidden">> Error: Exponente incorrecto.</div>
+                </div>
+
+                <div id="sub-step-log-3" class="hidden">
+                    <p id="log-instructions-text">> Variable aislada. Pasa el factor dividiendo para finalizar la extracción:</p>
+                    <div style="font-size: 1.3em; display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+                        <span>x = </span>
+                        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
+                            <input type="text" id="log-final-num" placeholder="Numerador" style="width: 100px; margin-bottom: 5px; background: transparent; border: 1px solid #00ff41; color: #00ff41; text-align: center; font-size: 0.8em; padding: 5px;">
+                            <div style="border-top: 2px solid #00ff41; width: 110px;"></div>
+                            <input type="text" id="log-final-den" placeholder="Denominador" style="width: 100px; margin-top: 5px; background: transparent; border: 1px solid #00ff41; color: #00ff41; text-align: center; font-size: 0.8em; padding: 5px;">
+                        </div>
+                    </div>
+                    <button onclick="checkFinalLog3()">> HACKEAR NÚCLEO</button>
+                    <div id="error-log-3" class="error-msg hidden">> Error: Fracción incorrecta. Recuerda escribir 'log(número)'.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="success-screen" class="hidden">
+            <h2 class="success-text">> PROTOCOLO SUPERADO</h2>
+            <div class="log">
+                <span id="success-message">> Modificando promedios a 10 en la base de datos...</span><br>
+                <div class="progress-container">
+                    <div id="progress-bar"></div>
+                </div>
+                <span id="progress-text">0%</span>
+            </div>
+        </div>
+
+        <div id="final-prank-screen" class="hidden">
+            <div style="position: relative; width: 100%; height: 100%; min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <h2 style="color: #00ff41; margin-bottom: 30px; text-align: center; font-size: 1.8em;">> MAINFRAME DEL IAS HACKEADO <br>> RESULTADOS DE LA EVALUACIÓN LISTOS:</h2>
+                <p style="color: #ffff00; margin-bottom: 40px;">Seleccione su destino académico definitivo:</p>
+                
+                <div style="width: 100%; position: relative; height: 250px;">
+                    <button id="btn-aprobaste" tabindex="-1" onmouseover="dodgeButton(this)" ontouchstart="dodgeButton(this, event)" onclick="dodgeButton(this, event)" style="position: absolute; left: 10%; top: 50px; font-size: 1.2em; background: #00ff41; color: #000; border: none; cursor: pointer; transition: none; z-index: 10; border-radius: 5px;">
+                        Aprobaste
+                    </button>
+                    
+                    <button onclick="acceptDefeat()" style="position: absolute; right: 10%; top: 50px; font-size: 1.2em; background: transparent; color: #ff3333; border: 2px solid #ff3333; cursor: pointer; z-index: 5; border-radius: 5px;">
+                        Diciembre
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="database.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

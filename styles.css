@@ -1,0 +1,123 @@
+body { 
+    background-color: #0d0d0d; 
+    color: #00ff41; 
+    font-family: 'Courier New', Courier, monospace; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    margin: 0; 
+}
+
+.terminal { 
+    background: #000; 
+    padding: 30px; 
+    border: 1px solid #00ff41; 
+    border-radius: 5px; 
+    width: 90%; 
+    max-width: 650px; 
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); 
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.hidden { display: none; }
+
+input { 
+    background: #0d0d0d; 
+    color: #00ff41; 
+    border: 1px solid #00ff41; 
+    padding: 5px; 
+    font-family: inherit; 
+    width: 60px; 
+    text-align: center;
+    font-size: 1.1em;
+    border-radius: 3px;
+}
+
+input:focus { outline: none; box-shadow: 0 0 5px #00ff41; }
+
+button { 
+    background: #00ff41; 
+    color: #000; 
+    border: none; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 15px; 
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+button:hover { background: #00cc33; box-shadow: 0 0 10px #00ff41; }
+
+.log { 
+    font-size: 0.9em; 
+    margin-bottom: 25px; 
+    color: #00cc33;
+    line-height: 1.6;
+}
+
+.equation { 
+    font-size: 1.5em; 
+    text-align: center; 
+    margin: 20px 0; 
+    letter-spacing: 2px;
+}
+
+.error-msg { color: #ff3333; margin-top: 10px; font-size: 0.9em; }
+
+.success-text { color: #ffff00; }
+
+.counter-display {
+    color: #00cc33; 
+    margin-bottom: 15px; 
+    border-bottom: 1px dashed #00ff41; 
+    padding-bottom: 10px;
+    font-size: 1.1em;
+}
+
+#node-counter, #layer-counter, #core-counter {
+    color: #ffff00; 
+    font-weight: bold;
+}
+
+.progress-container {
+    width: 100%;
+    height: 15px;
+    border: 1px solid #00ff41;
+    margin: 10px 0;
+    border-radius: 2px;
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #00ff41;
+    box-shadow: 0 0 10px #00ff41;
+}
+/* Estilos para las cajas de texto enriquecido (soportan exponentes visuales) */
+.rich-input {
+    background: #0d0d0d;
+    color: #00ff41;
+    border: 1px solid #00ff41;
+    padding: 5px 10px;
+    font-family: inherit;
+    font-size: 1.1em;
+    border-radius: 3px;
+    outline: none;
+    display: inline-block;
+    min-height: 24px;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+.rich-input[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #005511;
+    pointer-events: none;
+}
+.rich-input:focus {
+    box-shadow: 0 0 5px #00ff41;
+}
