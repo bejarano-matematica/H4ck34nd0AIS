@@ -113,14 +113,16 @@ const db = {
             route1: { latex: "5^{x} = 7", isValid: true, type: "log", logBase: "5", logArg: "7" },
             route2: { latex: "5^{x} = -1", isValid: false }
         },
+
         { 
             latexEq: "4^{x} + 2^{x} - 6 = 0", 
             latexIntermediate: "(2^{x})^{2} + 2^{x} - 6 = 0",
             latexQuad: "u^{2} + u - 6 = 0",
             uBase: "2", uExp: "x", root1: "2", root2: "-3", 
-            route1: { latex: "2^{x} = 2", isValid: true, type: "log", logBase: "2", logArg: "2" },
+            route1: { latex: "2^{x} = 2", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "1", finalX: "1" },
             route2: { latex: "2^{x} = -3", isValid: false } 
         },
+        
         { 
             latexEq: "4^{x} + 2^{x} - 30 = 0", 
             latexIntermediate: "(2^{x})^{2} + 2^{x} - 30 = 0",
