@@ -113,7 +113,6 @@ const db = {
             route1: { latex: "5^{x} = 7", isValid: true, type: "log", logBase: "5", logArg: "7" },
             route2: { latex: "5^{x} = -1", isValid: false }
         },
-
         { 
             latexEq: "4^{x} + 2^{x} - 6 = 0", 
             latexIntermediate: "(2^{x})^{2} + 2^{x} - 6 = 0",
@@ -122,7 +121,6 @@ const db = {
             route1: { latex: "2^{x} = 2", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "1", finalX: "1" },
             route2: { latex: "2^{x} = -3", isValid: false } 
         },
-        
         { 
             latexEq: "4^{x} + 2^{x} - 30 = 0", 
             latexIntermediate: "(2^{x})^{2} + 2^{x} - 30 = 0",
@@ -146,7 +144,7 @@ const db = {
             uBase: "7", uExp: "x", root1: "6", root2: "-2", 
             route1: { latex: "7^{x} = 6", isValid: true, type: "log", logBase: "7", logArg: "6" },
             route2: { latex: "7^{x} = -2", isValid: false }
-        }
+        }, // <--- ¡Esta es la coma que faltaba!
         { 
             latexEq: "4^{x} - 4 \\cdot 2^{x} - 32 = 0", 
             latexIntermediate: "(2^{x})^{2} - 4 \\cdot 2^{x} - 32 = 0",
@@ -171,5 +169,4 @@ const db = {
             route1: { latex: "5^{x} = 25", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "2", finalX: "2" },
             route2: { latex: "5^{x} = -5", isValid: false } 
         }
-    ]  
-};
+    ]
