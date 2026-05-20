@@ -132,3 +132,42 @@ const db = {
         { 
             latexEq: "9^{x} - 2 \\cdot 3^{x} - 15 = 0", 
             latexIntermediate: "(3^{x})^{2} - 2 \\cdot 3^{x} - 15 = 0",
+            latexQuad: "u^{2} - 2u - 15 = 0",
+            uBase: "3", uExp: "x", root1: "5", root2: "-3", 
+            route1: { latex: "3^{x} = 5", isValid: true, type: "log", logBase: "3", logArg: "5" },
+            route2: { latex: "3^{x} = -3", isValid: false }
+        },
+        { 
+            latexEq: "49^{x} - 4 \\cdot 7^{x} - 12 = 0", 
+            latexIntermediate: "(7^{x})^{2} - 4 \\cdot 7^{x} - 12 = 0",
+            latexQuad: "u^{2} - 4u - 12 = 0",
+            uBase: "7", uExp: "x", root1: "6", root2: "-2", 
+            route1: { latex: "7^{x} = 6", isValid: true, type: "log", logBase: "7", logArg: "6" },
+            route2: { latex: "7^{x} = -2", isValid: false }
+        },
+        { 
+            latexEq: "4^{x} - 4 \\cdot 2^{x} - 32 = 0", 
+            latexIntermediate: "(2^{x})^{2} - 4 \\cdot 2^{x} - 32 = 0",
+            latexQuad: "u^{2} - 4u - 32 = 0",
+            uBase: "2", uExp: "x", root1: "8", root2: "-4", 
+            route1: { latex: "2^{x} = 8", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "3", finalX: "3" },
+            route2: { latex: "2^{x} = -4", isValid: false } 
+        },
+        { 
+            latexEq: "9^{x} - 7 \\cdot 3^{x} - 18 = 0", 
+            latexIntermediate: "(3^{x})^{2} - 7 \\cdot 3^{x} - 18 = 0",
+            latexQuad: "u^{2} - 7u - 18 = 0",
+            uBase: "3", uExp: "x", root1: "9", root2: "-2", 
+            route1: { latex: "3^{x} = 9", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "2", finalX: "2" },
+            route2: { latex: "3^{x} = -2", isValid: false } 
+        },
+        { 
+            latexEq: "25^{x} - 20 \\cdot 5^{x} - 125 = 0", 
+            latexIntermediate: "(5^{x})^{2} - 20 \\cdot 5^{x} - 125 = 0",
+            latexQuad: "u^{2} - 20u - 125 = 0",
+            uBase: "5", uExp: "x", root1: "25", root2: "-5", 
+            route1: { latex: "5^{x} = 25", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "2", finalX: "2" },
+            route2: { latex: "5^{x} = -5", isValid: false } 
+        }
+    ]  
+};
