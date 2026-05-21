@@ -9,7 +9,8 @@ const db = {
         { latexEq: "256^{x + 3} = 1024^{x - 1}", latexSuccess: "2^{8(x + 3)} = 2^{10(x - 1)}", latexLinear: "8(x + 3) = 10(x - 1)", base: "2", leftExp: "8", rightExp: "10", distLeft: ["8x+24", "24+8x"], distRight: ["10x-10", "-10+10x"], x: "17" },
         { latexEq: "81^{3x - 1} = 243^{2x + 2}", latexSuccess: "3^{4(3x - 1)} = 3^{5(2x + 2)}", latexLinear: "4(3x - 1) = 5(2x + 2)", base: "3", leftExp: "4", rightExp: "5", distLeft: ["12x-4", "-4+12x"], distRight: ["10x+10", "10+10x"], x: "7" },
         { latexEq: "16^{2x + 1} = 64^{x - 1}", latexSuccess: "2^{4(2x + 1)} = 2^{6(x - 1)}", latexLinear: "4(2x + 1) = 6(x - 1)", base: "2", leftExp: "4", rightExp: "6", distLeft: ["8x+4", "4+8x"], distRight: ["6x-6", "-6+6x"], x: "-5" },
-        { latexEq: "27^{x - 1} = 9^{x + 2}", latexSuccess: "3^{3(x - 1)} = 3^{2(x + 2)}", latexLinear: "3(x - 1) = 2(x + 2)", base: "3", leftExp: "3", rightExp: "2", distLeft: ["3x-3", "-3+3x"], distRight: ["2x+4", "4+2x"], x: "11" },
+        // CORREGIDO: x ahora es "7" en lugar de "11"
+        { latexEq: "27^{x - 1} = 9^{x + 2}", latexSuccess: "3^{3(x - 1)} = 3^{2(x + 2)}", latexLinear: "3(x - 1) = 2(x + 2)", base: "3", leftExp: "3", rightExp: "2", distLeft: ["3x-3", "-3+3x"], distRight: ["2x+4", "4+2x"], x: "7" },
         { latexEq: "25^{3x - 1} = 125^{x + 2}", latexSuccess: "5^{2(3x - 1)} = 5^{3(x + 2)}", latexLinear: "2(3x - 1) = 3(x + 2)", base: "5", leftExp: "2", rightExp: "3", distLeft: ["6x-2", "-2+6x"], distRight: ["3x+6", "6+3x"], x: "2.66" },
         { latexEq: "49^{x + 4} = 343^{x}", latexSuccess: "7^{2(x + 4)} = 7^{3(x)}", latexLinear: "2(x + 4) = 3x", base: "7", leftExp: "2", rightExp: "3", distLeft: ["2x+8", "8+2x"], distRight: ["3x"], x: "8" },
         { latexEq: "32^{x - 2} = 128^{x - 4}", latexSuccess: "2^{5(x - 2)} = 2^{7(x - 4)}", latexLinear: "5(x - 2) = 7(x - 4)", base: "2", leftExp: "5", rightExp: "7", distLeft: ["5x-10", "-10+5x"], distRight: ["7x-28", "-28+7x"], x: "9" }
