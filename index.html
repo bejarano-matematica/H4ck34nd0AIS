@@ -11,6 +11,11 @@
 
     <div class="terminal">
         
+        <div id="status-bar" class="status-bar hidden">
+            <span style="color: #ff3333;">> ERRORES DETECTADOS: <span id="mistake-counter">0</span></span>
+            <span style="color: #00ff41;">> TIEMPO DE CONEXIÓN: <span id="timer-display">30:00</span></span>
+        </div>
+
         <div id="boot-screen">
             <div class="log">
                 > INICIANDO PROTOCOLO DE INFILTRACIÓN...<br>
@@ -22,8 +27,7 @@
                 > Para modificar los promedios a 10, es necesario romper los algoritmos.
             </div>
             <button onclick="startLevel1()">> INICIAR HACKEO DE NOTAS</button>
-            
-            </div>
+        </div>
 
         <div id="level-1" class="hidden">
             <h2>> NIVEL 1: VULNERAR LA PUERTA DE ENTRADA</h2>
@@ -65,8 +69,7 @@
                 <button onclick="checkX()">> DESENCRIPTAR</button>
                 <div id="error-1c" class="error-msg hidden">> Error: Clave incorrecta. Calcula bien el despeje.</div>
             </div>
-            
-            </div>
+        </div>
 
         <div id="level-2" class="hidden">
             <h2>> NIVEL 2: EL CORTAFUEGOS DE PRECEPTORÍA</h2>
@@ -77,13 +80,10 @@
             
             <div id="step-2-a">
                 <p>> Aplica la propiedad de potencias para desglosar los términos (usa '.' o '*' para multiplicar):</p>
-                
                 <div style="display: flex; justify-content: center; align-items: stretch; margin: 15px 0;">
                     <div id="expansion-input" class="rich-input" contenteditable="true" onkeyup="checkExpState()" placeholder="Ej: 2^2x + 2^2x.2^-1 + ..." style="width: 80%; text-align: left; padding: 10px; box-sizing: border-box; min-height: 44px;"></div>
-                    
                     <button onclick="enableExponent('expansion-input')" style="margin-left: 10px; width: 60px; font-size: 1.4em; background: #0d0d0d; color: #00ff41; border: 1px solid #00ff41; cursor: pointer; border-radius: 3px; display: flex; align-items: center; justify-content: center;" title="Insertar exponente">^</button>
                 </div>
-                
                 <button onclick="checkExpansion()">> DESGLOSAR TÉRMINOS</button>
                 <div id="error-2a" class="error-msg hidden">> Error: La expansión no coincide. Revisa exponentes y signos.</div>
             </div>
@@ -99,21 +99,16 @@
             <div id="step-2-c" class="hidden">
                 <br>
                 <p>> Introduce los términos residuales dentro del paréntesis para aislar la variable:</p>
-                
                 <div style="font-size: 1.2em; display: flex; justify-content: center; align-items: stretch; margin: 20px 0;">
                     <span style="display: flex; align-items: center;">
                         <span id="fc-display" class="success-text"></span> &middot; ( 
                     </span>
-                    
                     <div id="parenthesis-input" class="rich-input" contenteditable="true" onkeyup="checkExpState()" placeholder="Ej: 1+2^-1..." style="width: 220px; text-align: left; margin: 0 5px; padding: 8px; box-sizing: border-box; min-height: 40px;"></div> 
-                    
                     <span style="display: flex; align-items: center;">
                         ) = <span id="target-original-2" style="margin-left: 5px;"></span>
                     </span>
-                    
                     <button onclick="enableExponent('parenthesis-input')" style="margin-left: 15px; width: 50px; font-size: 1.2em; background: #0d0d0d; color: #00ff41; border: 1px solid #00ff41; cursor: pointer; border-radius: 3px; display: flex; align-items: center; justify-content: center;" title="Insertar exponente">^</button>
                 </div>
-                
                 <button onclick="checkParenthesis()">> EVALUAR PARÉNTESIS</button>
                 <div id="error-2c" class="error-msg hidden">> Error: Expresión residual incorrecta. Revisa las fracciones o signos.</div>
             </div>
@@ -138,8 +133,7 @@
                 <button onclick="checkLevel2Final()">> HACKEAR CAPA</button>
                 <div id="error-2e" class="error-msg hidden">> Error: Reducción o valor de x incorrectos.</div>
             </div>
-            
-            </div>
+        </div>
 
         <div id="level-3" class="hidden">
             <h2>> NIVEL 3: EL NÚCLEO (BASE DE DATOS DE NOTAS)</h2>
@@ -207,7 +201,6 @@
                 
                 <div id="sub-step-log-1">
                     <p>> Bases incompatibles. Inyecta logaritmo a ambos miembros de la igualdad:</p>
-                    
                     <div style="font-size: 1.3em; display: flex; justify-content: center; align-items: center; margin: 15px 0;">
                         <span>log ( </span>
                         <div id="log-inject-left" class="rich-input" contenteditable="true" onkeyup="checkExpState()" style="min-width: 60px; text-align: center; margin: 0 5px; padding: 5px;"></div>
@@ -216,7 +209,6 @@
                         <span>)</span>
                         <button onclick="enableExponent('log-inject-left')" style="margin-left: 15px; padding: 5px 15px; font-size: 1.2em; background: #0d0d0d; color: #00ff41; border: 1px solid #00ff41; cursor: pointer; border-radius: 3px;" title="Insertar exponente">^</button>
                     </div>
-                    
                     <button onclick="checkLogInject()">> INYECTAR</button>
                     <div id="error-log-1" class="error-msg hidden">> Error: Argumentos incorrectos.</div>
                 </div>
@@ -257,13 +249,20 @@
             </div>
         </div>
 
+        <div id="game-over-screen" class="hidden" style="text-align: center;">
+            <h2 style="color: #ff3333; font-size: 2em; margin-bottom: 20px;">> CONEXIÓN INTERCEPTADA</h2>
+            <p style="color: #00ff41; font-size: 1.2em; line-height: 1.5;">El tiempo se ha agotado.<br>El firewall detectó la intrusión y bloqueó tu IP permanentemente.</p>
+            <p style="color: #ffff00; font-size: 1.5em; margin-top: 30px; border: 1px dashed #ffff00; padding: 10px;">NOTA FINAL: 1 / 10</p>
+            <button onclick="location.reload()" style="margin-top: 30px;">> REINICIAR PROTOCOLO</button>
+        </div>
+
         <div id="final-prank-screen" class="hidden">
             <div style="position: relative; width: 100%; height: 100%; min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <h2 style="color: #00ff41; margin-bottom: 30px; text-align: center; font-size: 1.8em;">> SERVIDOR CENTRAL DEL AIS HACKEADO <br>> RESULTADOS DE LA EVALUACIÓN... LISTOS:</h2>
+                <h2 style="color: #00ff41; margin-bottom: 30px; text-align: center; font-size: 1.8em;">> SERVIDOR CENTRAL HACKEADO <br>> RESULTADOS DE LA EVALUACIÓN... LISTOS:</h2>
                 <p style="color: #ffff00; margin-bottom: 40px;">Seleccione su destino académico definitivo:</p>
                 
                 <div style="width: 100%; position: relative; height: 250px;">
-                    <button id="btn-aprobaste" tabindex="-1" onmouseover="dodgeButton(this)" ontouchstart="dodgeButton(this, event)" onclick="dodgeButton(this, event)" style="position: absolute; left: 10%; top: 50px; font-size: 1.2em; background: #00ff41; color: #000; border: none; cursor: pointer; transition: none; z-index: 10; border-radius: 5px;">
+                    <button id="btn-aprobaste" tabindex="-1" onmouseover="dodgeButton(this)" ontouchstart="dodgeButton(this, event)" onclick="catchMeIfYouCan()" style="position: absolute; left: 10%; top: 50px; font-size: 1.2em; background: #00ff41; color: #000; border: none; cursor: pointer; transition: none; z-index: 10; border-radius: 5px;">
                         Aprobaste
                     </button>
                     
@@ -278,5 +277,7 @@
 
     <script src="database.js"></script>
     <script src="script.js"></script>
+    
+    <!--<button id="bypass-btn" onclick="bypassExercise()" style="position: fixed; bottom: 20px; right: 20px; font-size: 0.8em; background: #1a1a1a; color: #00ff41; border: 1px dashed #00ff41; z-index: 1000; display: block;" title="Saltar ejercicio actual">> BYPASS</button>-->
 </body>
 </html>
