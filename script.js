@@ -1,4 +1,14 @@
 // ==========================================
+// CONFIGURACIÓN DE PUNTUACIÓN Y TIEMPO
+// ==========================================
+const LEVEL_MINUTES = 30; // Minutos asignados por cada nivel
+const PENALTY_PER_MISTAKE = 0.5; // Puntos restados a la nota (sobre 10) por error
+
+let mistakes = 0;
+let timeLeft = 0;
+let timerInterval = null;
+
+// ==========================================
 // FUNCIONES GENERALES Y HERRAMIENTAS
 // ==========================================
 let audioCtx;
@@ -18,6 +28,57 @@ function playTick() {
         osc.start();
         osc.stop(audioCtx.currentTime + 0.05);
     } catch(e) {}
+}
+
+function registerMistake(errorId) {
+    mistakes++;
+    document.getElementById('mistake-counter').innerText = mistakes;
+    const errorMsg = document.getElementById(errorId);
+    errorMsg.classList.remove('hidden');
+    setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+}
+
+// ==========================================
+// CONTROL DEL TEMPORIZADOR
+// ==========================================
+function startLevelTimer(minutes) {
+    clearInterval(timerInterval);
+    timeLeft = minutes * 60;
+    updateTimerUI();
+    document.getElementById('status-bar').classList.remove('hidden');
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI();
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            triggerGameOver();
+        }
+    }, 1000);
+}
+
+function updateTimerUI() {
+    let m = Math.floor(timeLeft / 60);
+    let s = timeLeft % 60;
+    const timerDisplay = document.getElementById('timer-display');
+    timerDisplay.innerText = `${m < 10 ? '0':''}${m}:${s < 10 ? '0':''}${s}`;
+    
+    if (timeLeft <= 60 && timeLeft > 10) {
+        timerDisplay.className = "time-warning";
+    } else if (timeLeft <= 10) {
+        timerDisplay.className = "time-critical";
+    } else {
+        timerDisplay.className = "";
+    }
+}
+
+function triggerGameOver() {
+    document.getElementById('boot-screen').classList.add('hidden');
+    document.getElementById('level-1').classList.add('hidden');
+    document.getElementById('level-2').classList.add('hidden');
+    document.getElementById('level-3').classList.add('hidden');
+    document.getElementById('status-bar').classList.add('hidden');
+    document.getElementById('game-over-screen').classList.remove('hidden');
 }
 
 function insertSymbol(inputId, symbol) {
@@ -48,6 +109,8 @@ function simulateDownload(nextLevelFunction) {
     let progress = 0;
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
+    clearInterval(timerInterval);
+    
     const interval = setInterval(() => {
         progress += Math.floor(Math.random() * 15) + 5; 
         if (progress >= 100) {
@@ -131,6 +194,7 @@ function startLevel1() {
     solvedNodes = 0;
     availableEqs = [...db.level1]; 
     updateCounterDisplay();
+    startLevelTimer(LEVEL_MINUTES);
     loadNextEquation();
 }
 
@@ -164,17 +228,14 @@ function checkBase() {
     const expL = document.getElementById('exp-left').value;
     const baseR = document.getElementById('base-right').value;
     const expR = document.getElementById('exp-right').value;
-    const errorMsg = document.getElementById('error-1a');
     
     if (baseL === currentEq.base && expL === currentEq.leftExp && 
         baseR === currentEq.base && expR === currentEq.rightExp) {
         document.getElementById('step-1-a').classList.add('hidden');
         document.getElementById('step-1-b').classList.remove('hidden');
-        
         renderMathDirectly('math-display-level-1', currentEq.latexSuccess, '#ffff00');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 2500);
+        registerMistake('error-1a');
     }
 }
 
@@ -182,26 +243,19 @@ function checkDist() {
     playTick();
     const distL = document.getElementById('dist-left').value.replace(/\s+/g, '').toLowerCase();
     const distR = document.getElementById('dist-right').value.replace(/\s+/g, '').toLowerCase();
-    const errorMsg = document.getElementById('error-1b');
     
     if (currentEq.distLeft.includes(distL) && currentEq.distRight.includes(distR)) {
         document.getElementById('step-1-b').classList.add('hidden');
         document.getElementById('step-1-c').classList.remove('hidden');
-        
-        // AQUÍ ESTÁ LA CORRECCIÓN: 
-        // En lugar de llamar a la ecuación con paréntesis de la base de datos, 
-        // imprimimos exactamente lo que el alumno acaba de calcular y validar.
         renderMathDirectly('math-display-level-1', `${distL} = ${distR}`, '#ffff00');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+        registerMistake('error-1b');
     }
 }
 
 function checkX() {
     playTick();
     const xVal = document.getElementById('x-input').value;
-    const errorMsg = document.getElementById('error-1c');
     
     if (xVal === currentEq.x) {
         solvedNodes++;
@@ -214,12 +268,12 @@ function checkX() {
             }, 1500);
         } else {
             document.getElementById('level-1').classList.add('hidden');
+            document.getElementById('success-message').innerText = "> CORTAFUEGOS MATEMÁTICO VULNERADO. ENRUTANDO A PRECEPTORÍA...";
             document.getElementById('success-screen').classList.remove('hidden');
             simulateDownload(startLevel2);
         }
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 2500);
+        registerMistake('error-1c');
     }
 }
 
@@ -238,6 +292,7 @@ function startLevel2() {
     solvedLayers = 0;
     availableEqs2 = [...db.level2]; 
     updateLayerCounterDisplay();
+    startLevelTimer(LEVEL_MINUTES);
     loadNextEquation2();
 }
 
@@ -286,15 +341,13 @@ function checkExpansion() {
     let rawText = getRichText('expansion-input');
     if (rawText.includes('=')) rawText = rawText.split('=')[0];
     let userInput = rawText.replace(/\s+/g, '').replace(/\*/g, '.').toLowerCase();
-    const errorMsg = document.getElementById('error-2a');
     
     if (currentEq2.expansion.includes(userInput)) {
         document.getElementById('step-2-a').classList.add('hidden');
         addCascadeLine('eq-line-1', currentEq2.latexExpansion + " = " + currentEq2.target);
         document.getElementById('step-2-b').classList.remove('hidden');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 3500);
+        registerMistake('error-2a');
     }
 }
 
@@ -302,7 +355,6 @@ function checkFactor() {
     playTick();
     const base = document.getElementById('fc-base').value;
     const exp = document.getElementById('fc-exp').value.replace(/\s+/g, '').toLowerCase();
-    const errorMsg = document.getElementById('error-2b');
     
     if (base === currentEq2.fcBase && exp === currentEq2.fcExp) {
         document.getElementById('step-2-b').classList.add('hidden');
@@ -314,8 +366,7 @@ function checkFactor() {
         document.getElementById('fc-display-2').innerHTML = `${currentEq2.fcBase}<sup>${currentEq2.fcExp}</sup>`;
         document.getElementById('step-2-c').classList.remove('hidden');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 2500);
+        registerMistake('error-2b');
     }
 }
 
@@ -323,7 +374,6 @@ function checkParenthesis() {
     playTick();
     let rawText = getRichText('parenthesis-input');
     const userInput = rawText.replace(/\s+/g, '').toLowerCase();
-    const errorMsg = document.getElementById('error-2c');
     
     if (currentEq2.validParenthesis.includes(userInput)) {
         document.getElementById('step-2-c').classList.add('hidden');
@@ -333,15 +383,13 @@ function checkParenthesis() {
         
         document.getElementById('step-2-d').classList.remove('hidden');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 3500);
+        registerMistake('error-2c');
     }
 }
 
 function checkSum() {
     playTick();
     const userInput = document.getElementById('sum-input').value.replace(/\s+/g, '');
-    const errorMsg = document.getElementById('error-2d');
     
     if (currentEq2.sumResult.includes(userInput)) {
         document.getElementById('step-2-d').classList.add('hidden');
@@ -358,8 +406,7 @@ function checkSum() {
         document.getElementById('fc-display-3').innerHTML = `${currentEq2.fcBase}<sup>${currentEq2.fcExp}</sup>`;
         document.getElementById('step-2-e').classList.remove('hidden');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 2500);
+        registerMistake('error-2d');
     }
 }
 
@@ -367,10 +414,8 @@ function checkLevel2Final() {
     playTick();
     const reducedTarget = document.getElementById('reduced-target').value;
     const xVal = document.getElementById('x-input-2').value;
-    const errorMsg = document.getElementById('error-2e');
     
     if (reducedTarget === currentEq2.reducedTarget && xVal === currentEq2.x) {
-        
         renderMathDirectly('eq-line-3', `${currentEq2.fcBase}^{${currentEq2.fcExp}} = ${currentEq2.reducedTarget}`, '#ffff00');
         
         solvedLayers++;
@@ -384,15 +429,15 @@ function checkLevel2Final() {
             }, 2500); 
         } else {
             document.getElementById('level-2').classList.add('hidden');
+            document.getElementById('success-message').innerText = "> CORTAFUEGOS DESTRUIDO. ACCEDIENDO AL NÚCLEO (CAMBIO DE VARIABLE)...";
             document.getElementById('success-screen').classList.remove('hidden');
+            
             simulateDownload(() => {
-                alert("> CORTAFUEGOS DESTRUIDO. ACCEDIENDO AL NÚCLEO (CAMBIO DE VARIABLE)...");
                 skipToLevel(3);
             });
         }
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 2500);
+        registerMistake('error-2e');
     }
 }
 
@@ -404,6 +449,11 @@ let solvedCores = 0;
 const coresRequired = 4;
 let availableEqs3 = [];
 
+// NUEVAS VARIABLES PARA CONTROLAR RUTAS DOBLES
+let activeRouteNum = 1; 
+let routesSolvedForCurrentEq = 0;
+let totalValidRoutes = 0;
+
 function startLevel3() {
     playTick();
     document.getElementById('success-screen').classList.add('hidden');
@@ -411,6 +461,7 @@ function startLevel3() {
     solvedCores = 0;
     availableEqs3 = [...db.level3]; 
     updateCoreCounterDisplay();
+    startLevelTimer(LEVEL_MINUTES);
     loadNextEquation3();
 }
 
@@ -420,10 +471,14 @@ function updateCoreCounterDisplay() {
 
 function addCascadeLine3(id, latexStr, color = '#00ff41') {
     const display = document.getElementById('math-display-level-3');
-    const newLine = document.createElement('div');
-    newLine.id = id;
-    newLine.style.verticalAlign = "middle";
-    display.appendChild(newLine);
+    // CORRECCIÓN: Verifica si la línea ya existe para no duplicarla
+    let newLine = document.getElementById(id);
+    if (!newLine) {
+        newLine = document.createElement('div');
+        newLine.id = id;
+        newLine.style.verticalAlign = "middle";
+        display.appendChild(newLine);
+    }
     renderMathDirectly(id, latexStr, color);
 }
 
@@ -431,6 +486,11 @@ function loadNextEquation3() {
     if(availableEqs3.length === 0) availableEqs3 = [...db.level3];
     const randomIndex = Math.floor(Math.random() * availableEqs3.length);
     currentEq3 = availableEqs3.splice(randomIndex, 1)[0];
+    
+    // Contar cuántas rutas válidas tiene la ecuación actual
+    routesSolvedForCurrentEq = 0;
+    totalValidRoutes = (currentEq3.route1 && currentEq3.route1.isValid ? 1 : 0) + 
+                       (currentEq3.route2 && currentEq3.route2.isValid ? 1 : 0);
     
     const display = document.getElementById('math-display-level-3');
     display.innerHTML = '<div id="eq3-line-0"></div>';
@@ -441,24 +501,23 @@ function loadNextEquation3() {
     document.getElementById('step-3-c').classList.add('hidden');
     document.getElementById('step-3-d').classList.add('hidden');
     
-    // Limpiar inputs
     document.getElementById('u-base').value = '';
     document.getElementById('u-exp').value = '';
     document.getElementById('u-root-1').value = '';
     document.getElementById('u-root-2').value = '';
     
-    // Limpiar correctamente los inputs interactivos de log
     if (document.getElementById('log-inject-left')) document.getElementById('log-inject-left').innerHTML = '';
     if (document.getElementById('log-inject-right')) document.getElementById('log-inject-right').value = '';
     if (document.getElementById('log-power-input')) document.getElementById('log-power-input').value = '';
     if (document.getElementById('log-final-num')) document.getElementById('log-final-num').value = '';
     if (document.getElementById('log-final-den')) document.getElementById('log-final-den').value = '';
     
-    // Resetear estilos de los botones de ruta
+    // Restablecer cajas de rutas
     document.getElementById('route-1-box').style.opacity = "1";
+    document.getElementById('route-1-box').style.display = "block";
     document.getElementById('route-2-box').style.opacity = "1";
+    document.getElementById('route-2-box').style.display = "block";
     
-    // Inyectar fórmula de Bhaskara
     renderMathDirectly('bhaskara-formula', "u = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", "#ffff00");
 }
 
@@ -466,18 +525,14 @@ function checkMask3() {
     playTick();
     const base = document.getElementById('u-base').value;
     const exp = document.getElementById('u-exp').value.replace(/\s+/g, '').toLowerCase();
-    const errorMsg = document.getElementById('error-3a');
     
     if (base === currentEq3.uBase && exp === currentEq3.uExp) {
         document.getElementById('step-3-a').classList.add('hidden');
-        
         addCascadeLine3('eq3-line-1', currentEq3.latexIntermediate);
         addCascadeLine3('eq3-line-2', currentEq3.latexQuad, '#ffff00');
-        
         document.getElementById('step-3-b').classList.remove('hidden');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 2500);
+        registerMistake('error-3a');
     }
 }
 
@@ -485,23 +540,18 @@ function checkRoots3() {
     playTick();
     const r1 = document.getElementById('u-root-1').value;
     const r2 = document.getElementById('u-root-2').value;
-    const errorMsg = document.getElementById('error-3b');
     
     const isCorrect = (r1 === currentEq3.root1 && r2 === currentEq3.root2) || 
                       (r1 === currentEq3.root2 && r2 === currentEq3.root1);
                       
     if (isCorrect) {
         document.getElementById('step-3-b').classList.add('hidden');
-        
         addCascadeLine3('eq3-line-3', `u_1 = ${currentEq3.root1} \\quad \\text{|} \\quad u_2 = ${currentEq3.root2}`);
-        
         renderMathDirectly('route-1-math', currentEq3.route1.latex);
         renderMathDirectly('route-2-math', currentEq3.route2.latex);
-        
         document.getElementById('step-3-c').classList.remove('hidden');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 3500);
+        registerMistake('error-3b');
     }
 }
 
@@ -516,6 +566,8 @@ function discardRoute(routeNum) {
         errorMsg.style.color = "#00ff41";
         errorMsg.classList.remove('hidden');
     } else {
+        mistakes++;
+        document.getElementById('mistake-counter').innerText = mistakes;
         errorMsg.innerText = "> Error: Esta ruta posee una solución real válida. No debes descartarla.";
         errorMsg.style.color = "#ff3333";
         errorMsg.classList.remove('hidden');
@@ -525,16 +577,17 @@ function discardRoute(routeNum) {
 
 function selectRoute(routeNum) {
     playTick();
+    activeRouteNum = routeNum; // Guardar qué ruta estamos resolviendo
     const route = routeNum === 1 ? currentEq3.route1 : currentEq3.route2;
     const errorMsg = document.getElementById('error-3c');
+    
     if (route.isValid) {
         document.getElementById('step-3-c').classList.add('hidden');
-        addCascadeLine3('eq3-line-4', route.latex, '#00ff41');
-        
+        // Separamos la cascada por ID de ruta
+        addCascadeLine3('eq3-line-4-' + activeRouteNum, route.latex, '#00ff41');
         document.getElementById('step-3-d').classList.remove('hidden');
         
         if (route.type === "log") {
-            // Lógica original de logaritmos
             document.getElementById('log-inject-left').innerHTML = '';
             document.getElementById('log-inject-right').value = '';
             document.getElementById('sub-step-log-1').classList.remove('hidden');
@@ -542,17 +595,16 @@ function selectRoute(routeNum) {
             document.getElementById('sub-step-log-3').classList.add('hidden');
             if (document.getElementById('sub-step-base-1')) document.getElementById('sub-step-base-1').classList.add('hidden');
         } else if (route.type === "base") {
-            // Lógica nueva para bases iguales
             document.getElementById('base-exp-left').value = '';
             document.getElementById('base-exp-right').value = '';
             document.getElementById('sub-step-base-1').classList.remove('hidden');
-            
-            // Ocultamos todo lo de logaritmos por las dudas
             document.getElementById('sub-step-log-1').classList.add('hidden');
             document.getElementById('sub-step-log-2').classList.add('hidden');
             document.getElementById('sub-step-log-3').classList.add('hidden');
         }
     } else {
+        mistakes++;
+        document.getElementById('mistake-counter').innerText = mistakes;
         errorMsg.innerText = "> Error: No puedes desencriptar una raíz negativa en los reales.";
         errorMsg.style.color = "#ff3333";
         errorMsg.classList.remove('hidden');
@@ -560,120 +612,223 @@ function selectRoute(routeNum) {
     }
 }
 
-// VALIDADOR FASE 1: Inyectar Logaritmo
 function checkLogInject() {
     playTick();
     let rawLeft = getRichText('log-inject-left').replace(/\s+/g, '').toLowerCase();
     let rawRight = document.getElementById('log-inject-right').value.replace(/\s+/g, '').toLowerCase();
-    const errorMsg = document.getElementById('error-log-1');
+    
+    const currentRoute = activeRouteNum === 1 ? currentEq3.route1 : currentEq3.route2;
     
     let expectedLeft = `${currentEq3.uBase}^${currentEq3.uExp}`.toLowerCase();
-    let expectedRight = currentEq3.route1.logArg;
+    let expectedRight = currentRoute.logArg;
 
     if (rawLeft === expectedLeft && rawRight === expectedRight) {
         document.getElementById('sub-step-log-1').classList.add('hidden');
-        addCascadeLine3('eq3-line-log1', `\\log(${currentEq3.uBase}^{${currentEq3.uExp}}) = \\log(${currentEq3.route1.logArg})`, '#00ff41');
-        
+        addCascadeLine3('eq3-line-log1-' + activeRouteNum, `\\log(${currentEq3.uBase}^{${currentEq3.uExp}}) = \\log(${currentRoute.logArg})`, '#00ff41');
         document.getElementById('log-base-display').innerText = `log(${currentEq3.uBase})`;
-        document.getElementById('log-arg-display').innerText = `log(${currentEq3.route1.logArg})`;
+        document.getElementById('log-arg-display').innerText = `log(${currentRoute.logArg})`;
         document.getElementById('log-power-input').value = '';
         document.getElementById('sub-step-log-2').classList.remove('hidden');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 2500);
+        registerMistake('error-log-1');
     }
 }
 
-// VALIDADOR FASE 2: Bajar Exponente
 function checkLogPower() {
     playTick();
     let expInput = document.getElementById('log-power-input').value.replace(/\s+/g, '').toLowerCase();
-    const errorMsg = document.getElementById('error-log-2');
+    const currentRoute = activeRouteNum === 1 ? currentEq3.route1 : currentEq3.route2;
     
     if (expInput === currentEq3.uExp.toLowerCase()) {
         document.getElementById('sub-step-log-2').classList.add('hidden');
-        addCascadeLine3('eq3-line-log2', `${currentEq3.uExp} \\cdot \\log(${currentEq3.uBase}) = \\log(${currentEq3.route1.logArg})`, '#00ff41');
-        
+        addCascadeLine3('eq3-line-log2-' + activeRouteNum, `${currentEq3.uExp} \\cdot \\log(${currentEq3.uBase}) = \\log(${currentRoute.logArg})`, '#00ff41');
         document.getElementById('log-final-num').value = '';
         document.getElementById('log-final-den').value = '';
         document.getElementById('sub-step-log-3').classList.remove('hidden');
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 2500);
+        registerMistake('error-log-2');
     }
 }
 
-// VALIDADOR FASE 3: Despeje Final
 function checkFinalLog3() {
     playTick();
     let numInput = document.getElementById('log-final-num').value.replace(/\s+/g, '').toLowerCase();
     let denInput = document.getElementById('log-final-den').value.replace(/\s+/g, '').toLowerCase();
-    const errorMsg = document.getElementById('error-log-3');
     
-    let expectedNum = `log(${currentEq3.route1.logArg})`;
+    const currentRoute = activeRouteNum === 1 ? currentEq3.route1 : currentEq3.route2;
+    
+    let expectedNum = `log(${currentRoute.logArg})`;
     let expectedDen = `log(${currentEq3.uBase})`;
-    
-    let altNum = currentEq3.route1.logArg;
+    let altNum = currentRoute.logArg;
     let altDen = currentEq3.uBase;
     
     let numCorrect = (numInput === expectedNum || numInput === altNum);
     let denCorrect = (denInput === expectedDen || denInput === altDen);
 
     if (numCorrect && denCorrect) {
+        addCascadeLine3('eq3-line-log3-' + activeRouteNum, `x = \\frac{\\log(${currentRoute.logArg})}{\\log(${currentEq3.uBase})}`, '#00ff41');
+        addCascadeLine3('eq3-line-5-' + activeRouteNum, `x = \\log_{${currentEq3.uBase}}(${currentRoute.logArg})`, '#ffff00');
         
-        addCascadeLine3('eq3-line-log3', `x = \\frac{\\log(${currentEq3.route1.logArg})}{\\log(${currentEq3.uBase})}`, '#00ff41');
-        addCascadeLine3('eq3-line-5', `x = \\log_{${currentEq3.uBase}}(${currentEq3.route1.logArg})`, '#ffff00');
+        routesSolvedForCurrentEq++;
         
-        solvedCores++;
-        updateCoreCounterDisplay();
-        
-        if (solvedCores < coresRequired) {
-            // CORRECCIÓN: Usamos querySelector para cambiar el texto del párrafo correcto entre ejercicios
-            const step3D_P = document.getElementById('log-instructions-text');
-            const originalText = "> Variable aislada. Pasa el factor dividiendo para finalizar la extracción:";
-            
-            step3D_P.innerText = `> ¡Solución encontrada! Ecuación ${solvedCores} de ${coresRequired} superada.`;
-            step3D_P.style.color = "#ffff00";
+        if (routesSolvedForCurrentEq < totalValidRoutes) {
+            // AÚN FALTAN RUTAS DE ESTA ECUACIÓN
+            const feedbackText = document.querySelector('#step-3-d p.success-text');
+            const originalText = feedbackText.innerText;
+            feedbackText.innerText = "> ¡Primera ruta desencriptada! Vuelve a seleccionar la ruta restante...";
             
             setTimeout(() => {
-                step3D_P.innerText = "> Inicializando siguiente secuencia encriptada...";
-                step3D_P.style.color = "#00ff41";
-            }, 2500);
-
-            setTimeout(() => {
-                step3D_P.innerText = originalText;
-                step3D_P.style.color = "";
-                loadNextEquation3();
-            }, 4500); 
+                feedbackText.innerText = originalText;
+                document.getElementById('step-3-d').classList.add('hidden');
+                document.getElementById('step-3-c').classList.remove('hidden');
+                document.getElementById(`route-${activeRouteNum}-box`).style.display = 'none'; // Oculta la resuelta
+            }, 3000);
+            
         } else {
-            document.getElementById('level-3').classList.add('hidden');
-            document.getElementById('success-screen').classList.remove('hidden');
+            // TODAS LAS RUTAS RESUELTAS
+            solvedCores++;
+            updateCoreCounterDisplay();
             
-            simulateDownload(() => {
-                // Ocultamos la barra de carga y mostramos la trampa
-                document.getElementById('success-screen').classList.add('hidden');
-                document.getElementById('final-prank-screen').classList.remove('hidden');
-            });
+            if (solvedCores < coresRequired) {
+                const step3D_P = document.getElementById('log-instructions-text');
+                const originalText = step3D_P.innerText;
+                
+                step3D_P.innerText = `> ¡Solución encontrada! Ecuación ${solvedCores} de ${coresRequired} superada.`;
+                step3D_P.style.color = "#ffff00";
+                
+                setTimeout(() => {
+                    step3D_P.innerText = "> Inicializando siguiente secuencia encriptada...";
+                    step3D_P.style.color = "#00ff41";
+                }, 2500);
+
+                setTimeout(() => {
+                    step3D_P.innerText = originalText;
+                    step3D_P.style.color = "";
+                    loadNextEquation3();
+                }, 4500); 
+            } else {
+                document.getElementById('level-3').classList.add('hidden');
+                document.getElementById('status-bar').classList.add('hidden');
+                document.getElementById('success-message').innerText = "> PROTOCOLO SUPERADO. Modificando promedios a 10 en la base de datos...";
+                document.getElementById('success-screen').classList.remove('hidden');
+                
+                simulateDownload(() => {
+                    document.getElementById('success-screen').classList.add('hidden');
+                    document.getElementById('final-prank-screen').classList.remove('hidden');
+                });
+            }
         }
     } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 3500);
+        registerMistake('error-log-3');
+    }
+}
+
+function checkBaseMatch3() {
+    playTick();
+    let expL = document.getElementById('base-exp-left').value.replace(/\s+/g, '').toLowerCase();
+    let expR = document.getElementById('base-exp-right').value.replace(/\s+/g, '').toLowerCase();
+    
+    const currentRoute = activeRouteNum === 1 ? currentEq3.route1 : currentEq3.route2;
+    
+    if (expL === currentRoute.matchExpLeft && expR === currentRoute.matchExpRight) {
+        document.getElementById('sub-step-base-1').classList.add('hidden');
+        addCascadeLine3('eq3-line-5-' + activeRouteNum, `x = ${currentRoute.finalX}`, '#ffff00');
+        
+        routesSolvedForCurrentEq++;
+        
+        if (routesSolvedForCurrentEq < totalValidRoutes) {
+             // AÚN FALTAN RUTAS DE ESTA ECUACIÓN
+             const feedbackText = document.querySelector('#step-3-d p.success-text');
+             const originalText = feedbackText.innerText;
+             feedbackText.innerText = "> ¡Primera ruta desencriptada! Vuelve a seleccionar la ruta restante...";
+             
+             setTimeout(() => {
+                 feedbackText.innerText = originalText;
+                 document.getElementById('step-3-d').classList.add('hidden');
+                 document.getElementById('step-3-c').classList.remove('hidden');
+                 document.getElementById(`route-${activeRouteNum}-box`).style.display = 'none'; // Oculta la resuelta
+             }, 3000);
+        } else {
+            // TODAS LAS RUTAS RESUELTAS
+            solvedCores++;
+            updateCoreCounterDisplay();
+            
+            if (solvedCores < coresRequired) {
+                const step3D_P = document.querySelector('#step-3-d p.success-text');
+                const originalText = step3D_P.innerText;
+                
+                step3D_P.innerText = `> ¡Solución encontrada! Ecuación ${solvedCores} de ${coresRequired} superada.`;
+                
+                setTimeout(() => {
+                    step3D_P.innerText = "> Inicializando siguiente secuencia encriptada...";
+                }, 2500);
+
+                setTimeout(() => {
+                    step3D_P.innerText = originalText;
+                    loadNextEquation3();
+                }, 4500); 
+            } else {
+                document.getElementById('level-3').classList.add('hidden');
+                document.getElementById('status-bar').classList.add('hidden');
+                document.getElementById('success-message').innerText = "> PROTOCOLO SUPERADO. Modificando promedios a 10 en la base de datos...";
+                document.getElementById('success-screen').classList.remove('hidden');
+                
+                simulateDownload(() => {
+                    document.getElementById('success-screen').classList.add('hidden');
+                    document.getElementById('final-prank-screen').classList.remove('hidden');
+                });
+            }
+        }
+    } else {
+        registerMistake('error-base-1');
     }
 }
 
 // ==========================================
-// LÓGICA DE LA BROMA FINAL
+// LÓGICA DE LA BROMA FINAL Y NOTAS
 // ==========================================
+
+// Array con las frases que se van a ir repitiendo
+const taunts = [
+    "¡Casi!",
+    "Tenés que ser más rápido...",
+    "¿No podés?",
+    "Mmm... falta velocidad.",
+    "¡Esforzate un poquito más!",
+    "¡Se escapó!"
+];
+let tauntIndex = 0;
 
 function dodgeButton(btn, event) {
     if (event) {
         event.preventDefault();
     }
 
+    // Crea el elemento de texto dinámicamente si es la primera vez que se mueve
+    let tauntLabel = document.getElementById('taunt-message');
+    if (!tauntLabel) {
+        tauntLabel = document.createElement('p');
+        tauntLabel.id = 'taunt-message';
+        tauntLabel.style.color = '#ff3333'; // Rojo alerta
+        tauntLabel.style.fontSize = '1.3em';
+        tauntLabel.style.fontWeight = 'bold';
+        tauntLabel.style.marginTop = '-10px';
+        tauntLabel.style.marginBottom = '20px';
+        tauntLabel.style.textAlign = 'center';
+        
+        // Lo inserta justo arriba del contenedor donde saltan los botones
+        const container = btn.parentElement;
+        container.parentElement.insertBefore(tauntLabel, container);
+    }
+
+    // Actualiza el texto con la frase actual y avanza en el ciclo
+    tauntLabel.style.color = '#ff3333';
+    tauntLabel.innerText = "> " + taunts[tauntIndex];
+    tauntIndex = (tauntIndex + 1) % taunts.length;
+
     const container = btn.parentElement;
     const btnDiciembre = document.getElementById('btn-diciembre');
     
-    // Obtenemos los límites del contenedor
     const maxX = container.clientWidth - btn.clientWidth;
     const maxY = container.clientHeight - btn.clientHeight;
     
@@ -681,13 +836,11 @@ function dodgeButton(btn, event) {
     let isOverlapping = true;
     let attempts = 0;
 
-    // Bucle para buscar coordenadas que no choquen con "Diciembre"
     while (isOverlapping && attempts < 50) {
         randomX = Math.floor(Math.random() * maxX);
         randomY = Math.floor(Math.random() * Math.max(maxY, 100));
 
         if (btnDiciembre) {
-            // Evaluamos si las nuevas coordenadas pisan el área del botón Diciembre (con 10px de margen)
             const margin = 10;
             const rectA = { x: randomX, y: randomY, width: btn.clientWidth, height: btn.clientHeight };
             const rectD = { 
@@ -709,21 +862,43 @@ function dodgeButton(btn, event) {
         attempts++;
     }
     
-    // Movemos el botón a la zona segura
     btn.style.left = randomX + 'px';
     btn.style.top = randomY + 'px';
 }
+
 function catchMeIfYouCan() {
-    // Por si algún alumno es extremadamente rápido o usa pantalla táctil
-    alert("> ERROR DE SEGURIDAD. Esta opción está bloqueada por el administrador.");
+    // Si por algún milagro táctil o glitch logran hacerle clic, no salta un alert, 
+    // sino que la frase cambia a un color especial amarillo y el botón huye de nuevo.
+    let tauntLabel = document.getElementById('taunt-message');
+    if (tauntLabel) {
+        tauntLabel.innerText = "> ¡Epa! ¡Casi lo atrapás haciendo trampa!";
+        tauntLabel.style.color = "#ffff00"; 
+    }
     dodgeButton(document.getElementById('btn-aprobaste'));
 }
 
 function acceptDefeat() {
     playTick();
+    clearInterval(timerInterval); // Cortar cualquier timer residual
+    
+    // Calcular Nota: Arranca en 10, resta 0.5 por cada error, piso mínimo en 1
+    let baseScore = 10;
+    let penalty = mistakes * PENALTY_PER_MISTAKE; 
+    let finalGrade = Math.max(1, baseScore - penalty);
+    
+    let perfectMessage = mistakes === 0 ? "<br><span style='color:#00ff41;'>(¡HACKEO PERFECTO!)</span>" : "";
+
     document.getElementById('final-prank-screen').innerHTML = `
         <h2 style="color: #ff3333; font-size: 2em; text-align: center;">> SISTEMA BLOQUEADO</h2>
-        <p style="color: #00ff41; font-size: 1.5em; text-align: center; margin-top: 20px;">
+        <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid #00ff41; padding: 20px; margin: 20px 0; border-radius: 5px; text-align: left;">
+            <p style="color: #00ff41; font-size: 1.3em; margin: 0 0 10px 0;">> ANÁLISIS DE RENDIMIENTO:</p>
+            <p style="color: #ffff00; font-size: 1.1em; margin: 5px 0;">- Nivel de Seguridad Superado: <strong>3/3</strong></p>
+            <p style="color: #ff3333; font-size: 1.1em; margin: 5px 0;">- Alertas Disparadas (Errores): <strong>${mistakes}</strong></p>
+            <p style="color: #00ff41; font-size: 1.5em; margin: 15px 0 0 0; text-align: center;">
+                <strong>NOTA FINAL: ${finalGrade.toFixed(2)} / 10</strong> ${perfectMessage}
+            </p>
+        </div>
+        <p style="color: #00ff41; font-size: 1.2em; text-align: center; margin-top: 20px;">
             ¡Excelente trabajo vulnerando las ecuaciones exponenciales!<br><br>
             ¡Aprobaste!... ¿Pero elegiste Diciembre?<br> 
             <span style="color: #ffff00; font-size: 0.8em;">(No te preocupes, te comparto las fechas).</span>
@@ -731,45 +906,100 @@ function acceptDefeat() {
     `;
 }
 
-// VALIDADOR FASE BIFURCADA: Bases Iguales
-function checkBaseMatch3() {
+// ==========================================
+// HERRAMIENTA DE DESARROLLADOR: BYPASS
+// ==========================================
+function bypassExercise() {
     playTick();
-    let expL = document.getElementById('base-exp-left').value.replace(/\s+/g, '').toLowerCase();
-    let expR = document.getElementById('base-exp-right').value.replace(/\s+/g, '').toLowerCase();
-    const errorMsg = document.getElementById('error-base-1');
     
-    if (expL === currentEq3.route1.matchExpLeft && expR === currentEq3.route1.matchExpRight) {
-        document.getElementById('sub-step-base-1').classList.add('hidden');
-        addCascadeLine3('eq3-line-5', `x = ${currentEq3.route1.finalX}`, '#ffff00');
-        
+    if (!document.getElementById('level-1').classList.contains('hidden')) {
+        solvedNodes++;
+        updateCounterDisplay();
+        if (solvedNodes < nodesRequired) {
+            loadNextEquation();
+        } else {
+            document.getElementById('level-1').classList.add('hidden');
+            document.getElementById('success-message').innerText = "> CORTAFUEGOS MATEMÁTICO VULNERADO. ENRUTANDO A PRECEPTORÍA...";
+            document.getElementById('success-screen').classList.remove('hidden');
+            simulateDownload(startLevel2);
+        }
+    } 
+    else if (!document.getElementById('level-2').classList.contains('hidden')) {
+        solvedLayers++;
+        updateLayerCounterDisplay();
+        if (solvedLayers < layersRequired) {
+            loadNextEquation2();
+        } else {
+            document.getElementById('level-2').classList.add('hidden');
+            document.getElementById('success-message').innerText = "> CORTAFUEGOS DESTRUIDO. ACCEDIENDO AL NÚCLEO (CAMBIO DE VARIABLE)...";
+            document.getElementById('success-screen').classList.remove('hidden');
+            simulateDownload(() => { skipToLevel(3); });
+        }
+    } 
+    else if (!document.getElementById('level-3').classList.contains('hidden')) {
         solvedCores++;
         updateCoreCounterDisplay();
-        
         if (solvedCores < coresRequired) {
-            // Reutilizamos el párrafo superior de step-3-d para dar feedback
-            const step3D_P = document.querySelector('#step-3-d p.success-text');
-            const originalText = step3D_P.innerText;
-            
-            step3D_P.innerText = `> ¡Solución encontrada! Ecuación ${solvedCores} de ${coresRequired} superada.`;
-            
-            setTimeout(() => {
-                step3D_P.innerText = "> Inicializando siguiente secuencia encriptada...";
-            }, 2500);
-
-            setTimeout(() => {
-                step3D_P.innerText = originalText;
-                loadNextEquation3();
-            }, 4500); 
+            loadNextEquation3();
         } else {
             document.getElementById('level-3').classList.add('hidden');
+            document.getElementById('status-bar').classList.add('hidden');
+            document.getElementById('success-message').innerText = "> PROTOCOLO SUPERADO. Modificando promedios a 10 en la base de datos...";
             document.getElementById('success-screen').classList.remove('hidden');
             simulateDownload(() => {
                 document.getElementById('success-screen').classList.add('hidden');
                 document.getElementById('final-prank-screen').classList.remove('hidden');
             });
         }
-    } else {
-        errorMsg.classList.remove('hidden');
-        setTimeout(() => errorMsg.classList.add('hidden'), 3500);
     }
 }
+/*
+// ==========================================
+// HERRAMIENTA DE DESARROLLADOR: BYPASS
+// ==========================================
+function bypassExercise() {
+    playTick();
+    
+    // Verifica qué nivel está activo para aplicar el salto
+    if (!document.getElementById('level-1').classList.contains('hidden')) {
+        solvedNodes++;
+        updateCounterDisplay();
+        if (solvedNodes < nodesRequired) {
+            loadNextEquation();
+        } else {
+            document.getElementById('level-1').classList.add('hidden');
+            document.getElementById('success-message').innerText = "> CORTAFUEGOS MATEMÁTICO VULNERADO. ENRUTANDO A PRECEPTORÍA...";
+            document.getElementById('success-screen').classList.remove('hidden');
+            simulateDownload(startLevel2);
+        }
+    } 
+    else if (!document.getElementById('level-2').classList.contains('hidden')) {
+        solvedLayers++;
+        updateLayerCounterDisplay();
+        if (solvedLayers < layersRequired) {
+            loadNextEquation2();
+        } else {
+            document.getElementById('level-2').classList.add('hidden');
+            document.getElementById('success-message').innerText = "> CORTAFUEGOS DESTRUIDO. ACCEDIENDO AL NÚCLEO (CAMBIO DE VARIABLE)...";
+            document.getElementById('success-screen').classList.remove('hidden');
+            simulateDownload(() => { skipToLevel(3); });
+        }
+    } 
+    else if (!document.getElementById('level-3').classList.contains('hidden')) {
+        solvedCores++;
+        updateCoreCounterDisplay();
+        if (solvedCores < coresRequired) {
+            loadNextEquation3();
+        } else {
+            document.getElementById('level-3').classList.add('hidden');
+            document.getElementById('status-bar').classList.add('hidden');
+            document.getElementById('success-message').innerText = "> PROTOCOLO SUPERADO. Modificando promedios a 10 en la base de datos...";
+            document.getElementById('success-screen').classList.remove('hidden');
+            simulateDownload(() => {
+                document.getElementById('success-screen').classList.add('hidden');
+                document.getElementById('final-prank-screen').classList.remove('hidden');
+            });
+        }
+    }
+}
+    */
