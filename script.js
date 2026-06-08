@@ -36,6 +36,15 @@ function registerMistake(errorId) {
     const errorMsg = document.getElementById(errorId);
     errorMsg.classList.remove('hidden');
     setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+
+    // --- NUEVO: Evento de Analytics para Errores ---
+    if (typeof gtag === 'function') {
+        gtag('event', 'error_cometido', {
+            'tipo_error': errorId,
+            'errores_totales': mistakes
+        });
+    }
+    
 }
 
 // ==========================================
@@ -270,6 +279,10 @@ function checkX() {
             document.getElementById('level-1').classList.add('hidden');
             document.getElementById('success-message').innerText = "> CORTAFUEGOS MATEMÁTICO VULNERADO. ENRUTANDO A PRECEPTORÍA...";
             document.getElementById('success-screen').classList.remove('hidden');
+            // --- NUEVO: Evento Nivel 1 ---
+            if (typeof gtag === 'function') {
+                gtag('event', 'nivel_completado', { 'nivel': 1 });
+            }
             simulateDownload(startLevel2);
         }
     } else {
@@ -431,6 +444,10 @@ function checkLevel2Final() {
             document.getElementById('level-2').classList.add('hidden');
             document.getElementById('success-message').innerText = "> CORTAFUEGOS DESTRUIDO. ACCEDIENDO AL NÚCLEO (CAMBIO DE VARIABLE)...";
             document.getElementById('success-screen').classList.remove('hidden');
+            // --- NUEVO: Evento Nivel 2 ---
+            if (typeof gtag === 'function') {
+                gtag('event', 'nivel_completado', { 'nivel': 2 });
+            }
             
             simulateDownload(() => {
                 skipToLevel(3);
@@ -711,6 +728,10 @@ function checkFinalLog3() {
                 document.getElementById('status-bar').classList.add('hidden');
                 document.getElementById('success-message').innerText = "> PROTOCOLO SUPERADO. Modificando promedios a 10 en la base de datos...";
                 document.getElementById('success-screen').classList.remove('hidden');
+                // --- NUEVO: Evento Nivel 3 ---
+                if (typeof gtag === 'function') {
+                    gtag('event', 'nivel_completado', { 'nivel': 3 });
+                }
                 
                 simulateDownload(() => {
                     document.getElementById('success-screen').classList.add('hidden');
@@ -772,6 +793,11 @@ function checkBaseMatch3() {
                 document.getElementById('status-bar').classList.add('hidden');
                 document.getElementById('success-message').innerText = "> PROTOCOLO SUPERADO. Modificando promedios a 10 en la base de datos...";
                 document.getElementById('success-screen').classList.remove('hidden');
+
+                // --- NUEVO: Evento Nivel 3 ---
+                if (typeof gtag === 'function') {
+                    gtag('event', 'nivel_completado', { 'nivel': 3 });
+                }
                 
                 simulateDownload(() => {
                     document.getElementById('success-screen').classList.add('hidden');
@@ -875,6 +901,11 @@ function catchMeIfYouCan() {
         tauntLabel.style.color = "#ffff00"; 
     }
     dodgeButton(document.getElementById('btn-aprobaste'));
+
+    // --- NUEVO: Evento Broma Aprobaste ---
+    if (typeof gtag === 'function') {
+        gtag('event', 'broma_intento_aprobaste');
+    }
 }
 
 function acceptDefeat() {
