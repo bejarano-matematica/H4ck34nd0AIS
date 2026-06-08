@@ -54,29 +54,29 @@ const db = {
             route1: { latex: "3^{x} = 5", isValid: true, type: "log", logBase: "3", logArg: "5" },
             route2: { latex: "3^{x} = 2", isValid: true, type: "log", logBase: "3", logArg: "2" }
         },
-        // 3. Una solución válida (Directa, sin log)
+        // 3. Una solución válida (Igualación de bases)
         { 
             latexEq: "4^{x} - 2^{x} - 2 = 0", 
             latexIntermediate: "(2^{x})^{2} - 2^{x} - 2 = 0", latexQuad: "u^{2} - u - 2 = 0",
             uBase: "2", uExp: "x", root1: "2", root2: "-1", 
-            route1: { latex: "2^{x} = 2", isValid: true, type: "direct", xValue: "1" },
+            route1: { latex: "2^{x} = 2", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "1", finalX: "1" },
             route2: { latex: "2^{x} = -1", isValid: false }
         },
-        // 4. Dos soluciones válidas (Directas, sin log)
+        // 4. Dos soluciones válidas (Igualación de bases)
         { 
             latexEq: "4^{x} - 6 \\cdot 2^{x} + 8 = 0", 
             latexIntermediate: "(2^{x})^{2} - 6 \\cdot 2^{x} + 8 = 0", latexQuad: "u^{2} - 6u + 8 = 0",
             uBase: "2", uExp: "x", root1: "4", root2: "2", 
-            route1: { latex: "2^{x} = 4", isValid: true, type: "direct", xValue: "2" },
-            route2: { latex: "2^{x} = 2", isValid: true, type: "direct", xValue: "1" }
+            route1: { latex: "2^{x} = 4", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "2", finalX: "2" },
+            route2: { latex: "2^{x} = 2", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "1", finalX: "1" }
         },
-        // 5. Mixta (Una solución log, una solución directa)
+        // 5. Mixta (Una solución log, una solución base)
         { 
             latexEq: "25^{x} - 8 \\cdot 5^{x} + 15 = 0", 
             latexIntermediate: "(5^{x})^{2} - 8 \\cdot 5^{x} + 15 = 0", latexQuad: "u^{2} - 8u + 15 = 0",
             uBase: "5", uExp: "x", root1: "5", root2: "3", 
-            route1: { latex: "5^{x} = 5", isValid: true, type: "direct", xValue: "1" },
+            route1: { latex: "5^{x} = 5", isValid: true, type: "base", matchExpLeft: "x", matchExpRight: "1", finalX: "1" },
             route2: { latex: "5^{x} = 3", isValid: true, type: "log", logBase: "5", logArg: "3" }
         }
-    ]  
+    ] 
 };
