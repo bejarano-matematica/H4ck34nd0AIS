@@ -941,7 +941,7 @@ function acceptDefeat() {
             ¡Aprobaste!... ¿Pero elegiste Diciembre?<br> 
             <span style="color: #ffff00; font-size: 0.8em;">(No te preocupes, te comparto las fechas).</span>
         </p>
-    ;
+    `;
 }
 
 // ==========================================
