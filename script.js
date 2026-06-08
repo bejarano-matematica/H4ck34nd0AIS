@@ -916,6 +916,13 @@ function acceptDefeat() {
     let baseScore = 10;
     let penalty = mistakes * PENALTY_PER_MISTAKE; 
     let finalGrade = Math.max(1, baseScore - penalty);
+
+    // --- NUEVO: Evento Broma Diciembre (Registra con qué nota terminaron) ---
+    if (typeof gtag === 'function') {
+        gtag('event', 'broma_rendicion_diciembre', {
+            'nota_obtenida': finalGrade.toFixed(2)
+        });
+    }
     
     let perfectMessage = mistakes === 0 ? "<br><span style='color:#00ff41;'>(¡HACKEO PERFECTO!)</span>" : "";
 
@@ -934,7 +941,7 @@ function acceptDefeat() {
             ¡Aprobaste!... ¿Pero elegiste Diciembre?<br> 
             <span style="color: #ffff00; font-size: 0.8em;">(No te preocupes, te comparto las fechas).</span>
         </p>
-    `;
+    ;
 }
 
 // ==========================================
